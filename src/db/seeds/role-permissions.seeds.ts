@@ -32,7 +32,9 @@ export async function seedRolePermissions() {
     }
 
     const getPermissionId = (name: string, action: string) => {
-      const permission = allPermissions.find(p => p.name === name && p.action === action);
+      const permission = allPermissions.find(
+        (p) => p.name === name && p.action === action
+      );
       return permission?.id;
     };
 
@@ -45,11 +47,17 @@ export async function seedRolePermissions() {
       { roleId: userRole.id, permissionId: getPermissionId('user', 'read') },
       { roleId: userRole.id, permissionId: getPermissionId('user', 'update') },
       { roleId: userRole.id, permissionId: getPermissionId('role', 'read') },
-    ].filter((p): p is { roleId: number; permissionId: number } => p.permissionId !== undefined);
+    ].filter(
+      (p): p is { roleId: number; permissionId: number } =>
+        p.permissionId !== undefined
+    );
 
     const guestPermissions = [
       { roleId: guestRole.id, permissionId: getPermissionId('user', 'read') },
-    ].filter((p): p is { roleId: number; permissionId: number } => p.permissionId !== undefined);
+    ].filter(
+      (p): p is { roleId: number; permissionId: number } =>
+        p.permissionId !== undefined
+    );
 
     const allRolePermissions = [
       ...adminPermissions,
@@ -61,17 +69,23 @@ export async function seedRolePermissions() {
       const existing = await db
         .select()
         .from(rolePermissions)
-        .where(and(
-          eq(rolePermissions.roleId, rolePermission.roleId),
-          eq(rolePermissions.permissionId, rolePermission.permissionId)
-        ))
+        .where(
+          and(
+            eq(rolePermissions.roleId, rolePermission.roleId),
+            eq(rolePermissions.permissionId, rolePermission.permissionId)
+          )
+        )
         .limit(1);
 
       if (existing.length === 0) {
         await db.insert(rolePermissions).values(rolePermission);
-        logger.info(`Atribuição criada: roleId ${rolePermission.roleId} - permissionId ${rolePermission.permissionId}`);
+        logger.info(
+          `Atribuição criada: roleId ${rolePermission.roleId} - permissionId ${rolePermission.permissionId}`
+        );
       } else {
-        logger.info(`Atribuição já existe: roleId ${rolePermission.roleId} - permissionId ${rolePermission.permissionId}`);
+        logger.info(
+          `Atribuição já existe: roleId ${rolePermission.roleId} - permissionId ${rolePermission.permissionId}`
+        );
       }
     }
 

@@ -14,7 +14,7 @@ export type PathItem = {
   responses?: Record<string, PathResponse>;
   requestBody?: RequestBody;
   [key: string]: unknown;
-}
+};
 
 export type PathParameter = {
   name: string;
@@ -23,20 +23,20 @@ export type PathParameter = {
   required?: boolean;
   schema?: SchemaObject;
   [key: string]: unknown;
-}
+};
 
 export type PathResponse = {
   description: string;
   content?: Record<string, { schema: SchemaObject }>;
   [key: string]: unknown;
-}
+};
 
 export type RequestBody = {
   description?: string;
   content: Record<string, { schema: SchemaObject }>;
   required?: boolean;
   [key: string]: unknown;
-}
+};
 
 export type SchemaObject = {
   type?: string;
@@ -46,7 +46,7 @@ export type SchemaObject = {
   required?: string[];
   enum?: unknown[];
   [key: string]: unknown;
-}
+};
 
 export type OpenAPISpec = {
   openapi: string;
@@ -62,4 +62,4 @@ export type OpenAPISpec = {
     [key: string]: unknown;
   };
   [key: string]: unknown;
-}
+};

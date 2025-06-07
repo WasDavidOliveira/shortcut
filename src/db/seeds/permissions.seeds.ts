@@ -65,17 +65,23 @@ export async function seedPermissions() {
       const existingPermission = await db
         .select()
         .from(permissions)
-        .where(and(
-          eq(permissions.name, permission.name),
-          eq(permissions.action, permission.action)
-        ))
+        .where(
+          and(
+            eq(permissions.name, permission.name),
+            eq(permissions.action, permission.action)
+          )
+        )
         .limit(1);
 
       if (existingPermission.length === 0) {
         await db.insert(permissions).values(permission);
-        logger.info(`Permissão criada: ${permission.name} - ${permission.action}`);
+        logger.info(
+          `Permissão criada: ${permission.name} - ${permission.action}`
+        );
       } else {
-        logger.info(`Permissão já existe: ${permission.name} - ${permission.action}`);
+        logger.info(
+          `Permissão já existe: ${permission.name} - ${permission.action}`
+        );
       }
     }
 

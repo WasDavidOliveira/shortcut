@@ -2,6 +2,7 @@ import { user } from '@/db/schema/v1/user.schema';
 import { roles } from '@/db/schema/v1/role.schema';
 import { permissions } from '@/db/schema/v1/permission.schema';
 import { rolePermissions } from '@/db/schema/v1/role-permission.schema';
+import { url } from '@/db/schema/v1/url.schema';
 import appConfig from '@/configs/app.config';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
@@ -17,5 +18,6 @@ export const db = drizzle(pool, {
     roles,
     permissions,
     rolePermissions,
+    url,
   },
 });
