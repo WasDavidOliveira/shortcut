@@ -2,8 +2,13 @@ import urlRepository from '@/repositories/v1/url.repository';
 import { CreateUrlModel, UpdateUrlModel } from '@/types/models/v1/url.types';
 
 export class UrlService {
-  async create(urlData: CreateUrlModel) {
-    const url = await urlRepository.create(urlData);
+  async create(urlData: Omit<CreateUrlModel, 'shortCode'>) {
+    const shortCode = Math.random().toString(36).substring(2, 8);
+
+    const url = await urlRepository.create({
+      ...urlData,
+      shortCode
+    });
 
     return url;
   }

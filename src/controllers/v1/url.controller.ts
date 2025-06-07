@@ -2,15 +2,39 @@ import { StatusCode } from '@/constants/status-code.constants';
 import { catchAsync } from '@/utils/catch-async.utils';
 import { Request, Response } from 'express';
 import UrlService from '@/services/v1/url.service';
+import { UpdateUrlInput, CreateUrlInput} from '@/validations/v1/url.validations';
 
 export class UrlController {
-  create = catchAsync(async (req: Request, res: Response) => {
-    const { originalUrl } = req.body;
+  allByUser = catchAsync(async (req: Request, res: Response) => {
+    const { userId } = req.params;
 
-    const url = await UrlService.create(originalUrl);
+    const urls = await UrlService.allByUser(Number(userId));
+
+    res.status(StatusCode.OK).json({
+      message: 'URLs encontradas com sucesso.',
+      data: urls,
+    });
+  });
+      
+  create = catchAsync(async (req: Request, res: Response) => {
+    const createUrlInput: CreateUrlInput['body'] = req.body;
+
+    const url = await UrlService.create(createUrlInput);
 
     res.status(StatusCode.CREATED).json({
       message: 'URL criada com sucesso.',
+      data: url,
+    });
+  });
+
+  update = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const updateUrlInput: UpdateUrlInput['body'] = req.body;
+
+    const url = await UrlService.update(Number(id), updateUrlInput);
+
+    res.status(StatusCode.OK).json({
+      message: 'URL atualizada com sucesso.',
       data: url,
     });
   });
@@ -33,17 +57,6 @@ export class UrlController {
 
     res.status(StatusCode.OK).json({
       message: 'URL deletada com sucesso.',
-    });
-  });
-
-  allByUser = catchAsync(async (req: Request, res: Response) => {
-    const { userId } = req.params;
-
-    const urls = await UrlService.allByUser(Number(userId));
-
-    res.status(StatusCode.OK).json({
-      message: 'URLs encontradas com sucesso.',
-      data: urls,
     });
   });
 }
