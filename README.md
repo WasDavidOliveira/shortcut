@@ -1,6 +1,27 @@
-# 🚀 Starter-Kit-API
+# 🔗 Shortcut
 
-Um kit inicial completo para desenvolvimento de APIs RESTful com Node.js e TypeScript, oferecendo uma arquitetura robusta, documentação automática e ferramentas modernas.
+Um encurtador de URLs completo desenvolvido com Node.js e TypeScript, oferecendo redirecionamento automático, contagem de cliques e gerenciamento de URLs por usuário autenticado.
+
+---
+
+## 🚀 Funcionalidades Principais
+
+### 🔗 Encurtamento de URLs
+- Criação de códigos curtos únicos para URLs longas
+- Redirecionamento automático para a URL original
+- Contagem automática de cliques
+- Sistema de ativação/desativação de URLs
+
+### 👥 Gestão de Usuários
+- Autenticação JWT segura
+- Registro e login de usuários
+- Cada usuário gerencia suas próprias URLs
+- Sistema de permissões e roles
+
+### 📊 Analytics
+- Contagem de cliques por URL
+- Histórico de URLs criadas por usuário
+- Controle de URLs ativas/inativas
 
 ---
 
@@ -40,13 +61,14 @@ Um kit inicial completo para desenvolvimento de APIs RESTful com Node.js e TypeS
 
 ```
 src/
-├── 📁 config/           # Configurações da aplicação
+├── 📁 configs/          # Configurações da aplicação
 ├── 📁 controllers/      # Controladores que processam as requisições
 ├── 📁 db/               # Definições de schema e migrações do Drizzle
 ├── 📁 middlewares/      # Middlewares do Express
-├── 📁 models/           # Definições de tipos e interfaces
+├── 📁 repositories/     # Camada de acesso aos dados
 ├── 📁 routes/           # Definições de rotas da API
 ├── 📁 services/         # Lógica de negócios
+├── 📁 types/            # Definições de tipos e interfaces
 ├── 📁 utils/            # Funções utilitárias
 ├── 📁 validations/      # Schemas Zod para validação
 └── 📄 server.ts         # Ponto de entrada da aplicação
@@ -58,15 +80,18 @@ src/
 
 ```bash
 # Clone o repositório
-git clone https://github.com/seu-usuario/starter-kit-api.git
-cd starter-kit-api
+git clone https://github.com/WasDavidOliveira/shortcut.git
+cd shortcut
 
 # Instale as dependências
 npm install
 
 # Configure as variáveis de ambiente
 cp .env.example .env
-# Edite o arquivo .env com suas configurações
+# Edite o arquivo .env com suas configurações de banco de dados
+
+# Execute as migrações do banco
+npm run db:migrate
 
 # Inicie o servidor de desenvolvimento
 npm run dev
@@ -88,39 +113,107 @@ npm run dev
 
 ---
 
+## 🔗 Como Usar o Encurtador
+
+### 1. Autenticação
+Primeiro, registre um usuário e faça login:
+
+```bash
+# Registrar novo usuário
+POST /api/v1/auth/register
+{
+  "name": "Seu Nome",
+  "email": "seu@email.com",
+  "password": "suasenha"
+}
+
+# Fazer login
+POST /api/v1/auth/login
+{
+  "email": "seu@email.com",
+  "password": "suasenha"
+}
+```
+
+### 2. Criar URL Encurtada
+```bash
+POST /api/v1/urls
+Authorization: Bearer seu_jwt_token
+{
+  "originalUrl": "https://www.exemplo.com/uma-url-muito-longa"
+}
+```
+
+### 3. Acessar URL Encurtada
+```bash
+# O usuário clica no link encurtado
+GET /api/v1/r/abc123
+
+# Será redirecionado automaticamente para a URL original
+# E o clique será contabilizado
+```
+
+### 4. Gerenciar URLs
+```bash
+# Listar todas as URLs do usuário
+GET /api/v1/urls/all
+
+# Ver detalhes de uma URL específica
+GET /api/v1/urls/:id
+
+# Atualizar URL (ativar/desativar)
+PUT /api/v1/urls/:id
+
+# Deletar URL
+DELETE /api/v1/urls/:id
+```
+
+---
+
 ## 📖 Documentação da API
 
-A documentação da API é gerada automaticamente usando Zod-OpenAPI e pode ser acessada em:
+A documentação completa da API é gerada automaticamente usando Zod-OpenAPI e pode ser acessada em:
 
 ```
 http://localhost:3000/docs
 ```
 
-## 🔐 Autenticação
+---
 
-O starter kit vem com autenticação JWT configurada. Para criar novos usuários e obter tokens de autenticação, utilize os endpoints:
+## 🗃️ Esquema do Banco de Dados
 
-- `POST /api/v1/auth/register` - 📝 Registrar um novo usuário
-- `POST /api/v1/auth/login` - 🔑 Login para obter token JWT
+### Tabela URLs
+- `id`: Identificador único
+- `originalUrl`: URL original a ser encurtada
+- `shortCode`: Código curto gerado automaticamente
+- `userId`: Referência ao usuário que criou
+- `isActive`: Status ativo/inativo da URL
+- `clicks`: Contador de cliques
+- `createdAt`: Data de criação
+- `updatedAt`: Data de atualização
+
+### Tabela Users
+- Sistema completo de usuários com autenticação
+- Roles e permissões configuráveis
 
 ---
 
-## 🗃️ Uso do Banco de Dados
+## 🔌 Endpoints Principais
 
-O projeto utiliza Drizzle ORM para interações com o banco de dados PostgreSQL. Para definir novos modelos:
+### Autenticação
+- `POST /api/v1/auth/register` - Registrar usuário
+- `POST /api/v1/auth/login` - Login
+- `GET /api/v1/auth/me` - Dados do usuário autenticado
 
-1. ✏️ Crie ou modifique os schemas em `src/db/schema`
-2. 🔄 Gere migrações com `npm run db:generate`
-3. ⬆️ Aplique migrações com `npm run db:migrate`
+### URLs (Requer autenticação)
+- `POST /api/v1/urls` - Criar URL encurtada
+- `GET /api/v1/urls/all` - Listar URLs do usuário
+- `GET /api/v1/urls/:id` - Detalhes de uma URL
+- `PUT /api/v1/urls/:id` - Atualizar URL
+- `DELETE /api/v1/urls/:id` - Deletar URL
 
----
-
-## 🔌 Adicionando Novos Endpoints
-
-1. 📝 Crie um schema de validação em `src/validations`
-2. 🎮 Crie um controlador em `src/controllers`
-3. 🛣️ Defina as rotas em `src/routes`
-4. 🔗 Registre as rotas no arquivo principal de rotas
+### Redirecionamento (Público)
+- `GET /api/v1/r/:shortCode` - Redireciona para URL original
 
 ---
 
