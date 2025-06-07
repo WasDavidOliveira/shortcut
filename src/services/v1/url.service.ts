@@ -1,32 +1,32 @@
-import { db } from '@/db/db.connection';
-import { NotFoundError } from '@/utils/app-error.utils';
-import { url } from '@/db/schema/v1/url.schema';
-import { UrlResource } from '@/resources/v1/url.resource';
+import urlRepository from '@/repositories/v1/url.repository';
+import { CreateUrlModel, UpdateUrlModel } from '@/types/models/v1/url.types';
 
 export class UrlService {
-  async create(originalUrl: string) {
-    const url = await db
-      .insert(url)
-      .values({
-        originalUrl,
-      })
-      .returning();
+  async create(urlData: CreateUrlModel) {
+    const url = await urlRepository.create(urlData);
+
+    return url;
+  }
+
+  async update(id: number, urlData: UpdateUrlModel) {
+    const url = await urlRepository.update(id, urlData);
 
     return url;
   }
 
   async show(id: number) {
-    const url = await db.select().from(url).where(eq(url.id, id));
+    const url = await urlRepository.findById(id);
 
     return url;
   }
 
   async delete(id: number) {
-    await db.delete(url).where(eq(url.id, id));
+    await urlRepository.delete(id);
   }
 
   async allByUser(userId: number) {
-    const urls = await db.select().from(url).where(eq(url.userId, userId));
+    const urls = await urlRepository.findAllByUserId(userId);
+
     return urls;
   }
 }
