@@ -26,19 +26,13 @@ class UrlRepository {
   }
 
   async findAllByUserId(userId: number): Promise<UrlModel[]> {
-    const urls = await db
-      .select()
-      .from(url)
-      .where(eq(url.userId, userId));
+    const urls = await db.select().from(url).where(eq(url.userId, userId));
 
     return urls;
   }
 
   async delete(id: number): Promise<boolean> {
-    const urlResults = await db
-      .delete(url)
-      .where(eq(url.id, id))
-      .returning();
+    const urlResults = await db.delete(url).where(eq(url.id, id)).returning();
 
     if (!urlResults[0]) {
       throw new NotFoundError('URL não encontrada');
@@ -47,7 +41,10 @@ class UrlRepository {
     return true;
   }
 
-  async update(id: number, urlData: Partial<CreateUrlModel>): Promise<UrlModel> {
+  async update(
+    id: number,
+    urlData: Partial<CreateUrlModel>
+  ): Promise<UrlModel> {
     const [updatedUrl] = await db
       .update(url)
       .set(urlData)
