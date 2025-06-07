@@ -53,16 +53,6 @@ export const getUrlSchema = z.object({
   })
 });
 
-export const getUserUrlsSchema = z.object({
-  params: z.object({
-    userId: z
-      .string({ required_error: 'ID do usuário é obrigatório' })
-      .transform((id) => Number(id))
-      .refine((id) => !isNaN(id), { message: 'ID do usuário deve ser um número válido' })
-      .refine((id) => id > 0, { message: 'ID do usuário deve ser positivo' })
-  })
-});
-
 export type CreateUrlInput = z.infer<typeof createUrlSchema>;
 export type UpdateUrlInput = z.infer<typeof updateUrlSchema>;
 

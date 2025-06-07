@@ -6,7 +6,7 @@ import { UpdateUrlInput, CreateUrlInput} from '@/validations/v1/url.validations'
 
 export class UrlController {
   allByUser = catchAsync(async (req: Request, res: Response) => {
-    const { userId } = req.params;
+    const userId = req.userId;
 
     const urls = await UrlService.allByUser(Number(userId));
 
