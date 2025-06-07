@@ -5,4 +5,4 @@ const router: Router = Router();
 
 router.get('/:shortCode', redirectController.redirect);
 
-export default router; 
+export default router;

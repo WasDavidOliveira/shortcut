@@ -13,4 +13,4 @@ export class RedirectController {
   });
 }
 
-export default new RedirectController(); 
+export default new RedirectController();

@@ -2,7 +2,10 @@ import { StatusCode } from '@/constants/status-code.constants';
 import { catchAsync } from '@/utils/catch-async.utils';
 import { Request, Response } from 'express';
 import UrlService from '@/services/v1/url.service';
-import { UpdateUrlInput, CreateUrlInput} from '@/validations/v1/url.validations';
+import {
+  UpdateUrlInput,
+  CreateUrlInput,
+} from '@/validations/v1/url.validations';
 
 export class UrlController {
   allByUser = catchAsync(async (req: Request, res: Response) => {
@@ -15,7 +18,7 @@ export class UrlController {
       data: urls,
     });
   });
-      
+
   create = catchAsync(async (req: Request, res: Response) => {
     const createUrlInput: CreateUrlInput['body'] = req.body;
 

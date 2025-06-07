@@ -74,7 +74,7 @@ class UrlRepository {
 
   async incrementClicks(id: number): Promise<UrlModel> {
     const urlToUpdate = await this.findById(id);
-    
+
     const [updatedUrl] = await db
       .update(url)
       .set({ clicks: urlToUpdate.clicks + 1 })

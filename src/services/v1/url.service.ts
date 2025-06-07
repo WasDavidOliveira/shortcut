@@ -8,7 +8,7 @@ export class UrlService {
 
     const url = await urlRepository.create({
       ...urlData,
-      shortCode
+      shortCode,
     });
 
     return url;
@@ -38,7 +38,7 @@ export class UrlService {
 
   async redirectByShortCode(shortCode: string) {
     const url = await urlRepository.findByShortCode(shortCode);
-    
+
     if (!url.isActive) {
       throw new NotFoundError('URL não encontrada ou desativada.');
     }
