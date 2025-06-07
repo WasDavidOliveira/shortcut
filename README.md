@@ -182,6 +182,9 @@ http://localhost:3000/docs
 
 ## 🗃️ Esquema do Banco de Dados
 
+Para visualizar o **Modelo Entidade-Relacionamento (MER)** completo do projeto, acesse:
+**[📊 Diagrama do Banco de Dados](https://drawsql.app/teams/avalanchelabs/diagrams/shortcut)**
+
 ### Tabela URLs
 - `id`: Identificador único
 - `originalUrl`: URL original a ser encurtada
