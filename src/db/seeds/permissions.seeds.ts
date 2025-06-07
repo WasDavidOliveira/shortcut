@@ -2,6 +2,7 @@ import { db } from '@/db/db.connection';
 import { permissions } from '@/db/schema/v1/permission.schema';
 import { logger } from '@/utils/logger.utils';
 import { PermissionActions } from '@/constants/permission.constants';
+import { eq, and } from 'drizzle-orm';
 
 export async function seedPermissions() {
   try {
@@ -61,10 +62,21 @@ export async function seedPermissions() {
     logger.info('Seeding permissions...');
 
     for (const permission of defaultPermissions) {
-      await db
-        .insert(permissions)
-        .values(permission)
-        .onConflictDoNothing({ target: permissions.name });
+      const existingPermission = await db
+        .select()
+        .from(permissions)
+        .where(and(
+          eq(permissions.name, permission.name),
+          eq(permissions.action, permission.action)
+        ))
+        .limit(1);
+
+      if (existingPermission.length === 0) {
+        await db.insert(permissions).values(permission);
+        logger.info(`Permissão criada: ${permission.name} - ${permission.action}`);
+      } else {
+        logger.info(`Permissão já existe: ${permission.name} - ${permission.action}`);
+      }
     }
 
     logger.info('Permissions seeded successfully');

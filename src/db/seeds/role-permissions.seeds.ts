@@ -1,7 +1,7 @@
 import { db } from '@/db/db.connection';
 import { roles } from '@/db/schema/v1/role.schema';
 import { rolePermissions } from '@/db/schema/v1/role-permission.schema';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { logger } from '@/utils/logger.utils';
 
 export async function seedRolePermissions() {
@@ -31,13 +31,10 @@ export async function seedRolePermissions() {
       );
     }
 
-    const permissionMap = allPermissions.reduce(
-      (map, permission) => {
-        map[permission.name] = permission.id;
-        return map;
-      },
-      {} as Record<string, number>
-    );
+    const getPermissionId = (name: string, action: string) => {
+      const permission = allPermissions.find(p => p.name === name && p.action === action);
+      return permission?.id;
+    };
 
     const adminPermissions = allPermissions.map((permission) => ({
       roleId: adminRole.id,
@@ -45,14 +42,14 @@ export async function seedRolePermissions() {
     }));
 
     const userPermissions = [
-      { roleId: userRole.id, permissionId: permissionMap['read_users'] },
-      { roleId: userRole.id, permissionId: permissionMap['update_user'] },
-      { roleId: userRole.id, permissionId: permissionMap['read_roles'] },
-    ];
+      { roleId: userRole.id, permissionId: getPermissionId('user', 'read') },
+      { roleId: userRole.id, permissionId: getPermissionId('user', 'update') },
+      { roleId: userRole.id, permissionId: getPermissionId('role', 'read') },
+    ].filter((p): p is { roleId: number; permissionId: number } => p.permissionId !== undefined);
 
     const guestPermissions = [
-      { roleId: guestRole.id, permissionId: permissionMap['read_users'] },
-    ];
+      { roleId: guestRole.id, permissionId: getPermissionId('user', 'read') },
+    ].filter((p): p is { roleId: number; permissionId: number } => p.permissionId !== undefined);
 
     const allRolePermissions = [
       ...adminPermissions,
@@ -61,10 +58,21 @@ export async function seedRolePermissions() {
     ];
 
     for (const rolePermission of allRolePermissions) {
-      await db
-        .insert(rolePermissions)
-        .values(rolePermission)
-        .onConflictDoNothing();
+      const existing = await db
+        .select()
+        .from(rolePermissions)
+        .where(and(
+          eq(rolePermissions.roleId, rolePermission.roleId),
+          eq(rolePermissions.permissionId, rolePermission.permissionId)
+        ))
+        .limit(1);
+
+      if (existing.length === 0) {
+        await db.insert(rolePermissions).values(rolePermission);
+        logger.info(`Atribuição criada: roleId ${rolePermission.roleId} - permissionId ${rolePermission.permissionId}`);
+      } else {
+        logger.info(`Atribuição já existe: roleId ${rolePermission.roleId} - permissionId ${rolePermission.permissionId}`);
+      }
     }
 
     logger.info('Role permissions seeded successfully');
