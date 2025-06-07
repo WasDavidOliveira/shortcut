@@ -5,9 +5,11 @@ import { authMiddleware } from '@/middlewares/auth.middlewares';
 import rolePermissionRoutes from '@/routes/v1/role-permission.routes';
 import roleRoutes from '@/routes/v1/roles.routes';
 import urlRoutes from '@/routes/v1/url.routes';
+import redirectRoutes from '@/routes/v1/redirect.routes';
 
 const router: Router = Router();
 
+router.use('/r', redirectRoutes);
 router.use('/auth', authRoutes);
 router.use('/permissions', authMiddleware, permissionRoutes);
 router.use('/roles', authMiddleware, roleRoutes);

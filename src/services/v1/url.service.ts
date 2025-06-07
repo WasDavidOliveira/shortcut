@@ -1,5 +1,6 @@
 import urlRepository from '@/repositories/v1/url.repository';
 import { CreateUrlModel, UpdateUrlModel } from '@/types/models/v1/url.types';
+import { NotFoundError } from '@/utils/app-error.utils';
 
 export class UrlService {
   async create(urlData: Omit<CreateUrlModel, 'shortCode'>) {
@@ -33,6 +34,18 @@ export class UrlService {
     const urls = await urlRepository.findAllByUserId(userId);
 
     return urls;
+  }
+
+  async redirectByShortCode(shortCode: string) {
+    const url = await urlRepository.findByShortCode(shortCode);
+    
+    if (!url.isActive) {
+      throw new NotFoundError('URL não encontrada ou desativada.');
+    }
+
+    await urlRepository.incrementClicks(url.id);
+
+    return url.originalUrl;
   }
 }
 

@@ -57,6 +57,36 @@ class UrlRepository {
 
     return updatedUrl;
   }
+
+  async findByShortCode(shortCode: string): Promise<UrlModel> {
+    const urlResults = await db
+      .select()
+      .from(url)
+      .where(eq(url.shortCode, shortCode))
+      .limit(1);
+
+    if (!urlResults[0]) {
+      throw new NotFoundError('URL não encontrada');
+    }
+
+    return urlResults[0];
+  }
+
+  async incrementClicks(id: number): Promise<UrlModel> {
+    const urlToUpdate = await this.findById(id);
+    
+    const [updatedUrl] = await db
+      .update(url)
+      .set({ clicks: urlToUpdate.clicks + 1 })
+      .where(eq(url.id, id))
+      .returning();
+
+    if (!updatedUrl) {
+      throw new NotFoundError('URL não encontrada');
+    }
+
+    return updatedUrl;
+  }
 }
 
 export default new UrlRepository();
