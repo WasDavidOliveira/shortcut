@@ -57,6 +57,31 @@ export async function seedPermissions() {
         description: 'Permite gerenciar configurações do sistema',
         action: PermissionActions.MANAGE,
       },
+      {
+        name: 'url',
+        description: 'Permite gerenciar URLs',
+        action: PermissionActions.MANAGE,
+      },
+      {
+        name: 'url',
+        description: 'Permite criar URLs',
+        action: PermissionActions.CREATE,
+      },
+      {
+        name: 'url',
+        description: 'Permite atualizar URLs',
+        action: PermissionActions.UPDATE,
+      },
+      {
+        name: 'url',
+        description: 'Permite remover URLs',
+        action: PermissionActions.DELETE,
+      },
+      {
+        name: 'url',
+        description: 'Permite listar URLs',
+        action: PermissionActions.READ,
+      },
     ];
 
     logger.info('Seeding permissions...');
