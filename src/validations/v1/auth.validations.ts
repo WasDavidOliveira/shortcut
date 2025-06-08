@@ -53,10 +53,6 @@ export const registerSchema = z.object({
           example: 'senha123',
           format: 'password',
         }),
-      roleId: z.number().openapi({
-        description: 'ID do papel do usuário',
-        example: 1,
-      }),
     })
     .openapi({
       ref: 'RegisterInput',

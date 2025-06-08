@@ -38,6 +38,7 @@ export class AuthService {
     const user = await UserRepository.create({
       ...userData,
       password: passwordHash,
+      roleId: 2,
     });
 
     return user;

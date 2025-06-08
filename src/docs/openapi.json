@@ -220,18 +220,12 @@
             "description": "Senha do usuário",
             "example": "senha123",
             "format": "password"
-          },
-          "roleId": {
-            "type": "number",
-            "description": "ID do papel do usuário",
-            "example": 1
           }
         },
         "required": [
           "name",
           "email",
-          "password",
-          "roleId"
+          "password"
         ],
         "description": "Dados para criação de um novo usuário"
       },
